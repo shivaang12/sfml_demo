@@ -18,7 +18,7 @@ int generateRandomIntBetweenLimits(const int &low, const int &high) {
     return (int)dist(gen);
 }
 
-float generateRandomFloatBetweenLimits(const float &low, const float &high ) {
+float generateRandomFloatBetweenLimits(const float &low, const float &high) {
     // Create a random device (for non-deterministic seeding)
     std::random_device rd;
 
