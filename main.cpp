@@ -11,6 +11,7 @@
 #include <body.hpp>
 #include <sfml_random.hpp>
 #include <utils.hpp>
+#include <manual_controller.hpp>
 
 const int GLOBAL_PADDING = 100;
 
@@ -35,17 +36,25 @@ int main() {
 
     sf::Clock clock;
 
+    auto player_controller = ManualController(100.f);
+
     while (window.isOpen()) {
         // std::cout << "Elapsed Time: " << clock.getElapsedTime().asSeconds() << "\n";
         window.handleEvents(onClose);
 
         window.clear();
-        // window.draw(shape);
 
+        // Assuming body_list[0] is our player
+        player_controller.movePlayerUsingInput(body_list[0], clock.getElapsedTime().asSeconds());
+
+        clock.restart();
+
+        // Draw;
         for (const auto &shape_var : body_list) {
             window.draw(shape_var.c_shape_);
         }
 
+        // Display
         window.display();
     }
 }

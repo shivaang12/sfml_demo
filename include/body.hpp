@@ -45,6 +45,20 @@ class Body {
             throw std::invalid_argument("Shape not implemented");
         }
     }
+
+    void syncShapePositionWithPosition(){
+      this->c_shape_.setPosition(this->position_ - this->radius_);
+    }
+
+    void updatePosition(sf::Vector2f position) {
+      this->position_ = position;
+      this->syncShapePositionWithPosition();
+    }
+
+    void movePosition(const sf::Vector2f &position_difference) {
+      this->position_ += position_difference;
+      this->syncShapePositionWithPosition();
+    }
 };
 
 Body createCircleBody(const sf::Vector2f position, const float density, const float mass,
