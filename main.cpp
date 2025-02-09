@@ -84,7 +84,7 @@ sf::Vector2f RandomInitialDirection() {
 int main()
 {
     // Defining Rendering Window
-    sf::RenderWindow window(sf::VideoMode({800, 400}), "SFML works!");
+    sf::RenderWindow window(sf::VideoMode({1920, 1080}), "SFML works!");
 
     // Defining circle radius
     const float circleRadius= 100.f;
