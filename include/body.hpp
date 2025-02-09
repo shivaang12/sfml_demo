@@ -59,6 +59,10 @@ class Body {
       this->position_ += position_difference;
       this->syncShapePositionWithPosition();
     }
+
+    sf::Vector2f getPosition() const {
+      return position_;
+    }
 };
 
 Body createCircleBody(const sf::Vector2f position, const float density, const float mass,

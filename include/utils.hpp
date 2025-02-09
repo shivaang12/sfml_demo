@@ -22,8 +22,12 @@ std::vector<sf::Color> VALID_COLORS = {sf::Color(52, 82, 74),    sf::Color(162, 
                                        sf::Color(229, 231, 230), sf::Color(160, 113, 120),
                                        sf::Color(119, 98, 116)};
 
+float calculateLengthOfVector(const sf::Vector2f &vec) {
+    return std::sqrt(vec.x * vec.x + vec.y * vec.y);
+}
+                                       
 sf::Vector2f calculateUnitVector(const sf::Vector2f &vec) {
-    const auto length = std::sqrt(vec.x * vec.x + vec.y * vec.y);
+    const auto length = calculateLengthOfVector(vec);
     return sf::Vector2f( {vec.x/length, vec.y/length} );
 }
 #endif // SFML_DEMO_UTILS_H

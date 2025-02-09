@@ -12,6 +12,7 @@
 #include <sfml_random.hpp>
 #include <utils.hpp>
 #include <manual_controller.hpp>
+#include <world_physics.hpp>
 
 const int GLOBAL_PADDING = 100;
 
@@ -37,6 +38,7 @@ int main() {
     sf::Clock clock;
 
     auto player_controller = ManualController(100.f);
+    auto physics_engine = WorldPhysics();
 
     while (window.isOpen()) {
         // std::cout << "Elapsed Time: " << clock.getElapsedTime().asSeconds() << "\n";
@@ -48,6 +50,9 @@ int main() {
         player_controller.movePlayerUsingInput(body_list[0], clock.getElapsedTime().asSeconds());
 
         clock.restart();
+
+        // check for collision
+        physics_engine.handleCollision(body_list);
 
         // Draw;
         for (const auto &shape_var : body_list) {
