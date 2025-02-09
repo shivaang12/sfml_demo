@@ -1,139 +1,52 @@
-#include <cstdlib>  // For rand() and srand()
-#include <ctime> // For Time
-#include <random>
 #include <cmath>
+#include <cstdlib> // For rand() and srand()
+#include <ctime>   // For Time
+#include <iostream>
+#include <random>
+#include <vector>
 
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 
-// Some serious missing op overloading
-namespace sf {
-    Vector2f operator-(const Vector2f& v, const float& scalar_float){
-        return Vector2f({v.x - scalar_float, v.y - scalar_float});
-    }
+#include <utils.hpp>
+#include <sfml_random.hpp>
+#include <body.hpp>
 
-    Vector2f operator+(const Vector2f& v, const float& scalar_float){
-        return Vector2f({v.x + scalar_float, v.y + scalar_float});
-    }
-}
+const int GLOBAL_PADDING = 100;
 
-// Collision checking function
-void HandleWindowCollision(const sf::CircleShape &cirShape, const sf::Vector2u &window_size,
-    sf::Vector2f& shapeDir, const float& speed) {
-    const auto &wsize = window_size;
-
-    const auto &shapeRad = cirShape.getRadius();
-    const auto &shapePosNorm = cirShape.getPosition() + shapeRad; // Normalized Postion
-
-    const auto &futPos = shapePosNorm + (shapeDir * speed);
-
-    if ( futPos.x - shapeRad < 0.0f ) {
-        shapeDir.x *= -1.0f;
-    }
-
-    if (futPos.x + shapeRad >= wsize.x) {
-        shapeDir.x *= -1.0f;
-    }
-
-    if (futPos.y - shapeRad < 0.0f) {
-        shapeDir.y *= -1.0f;
-    }
-
-    if (futPos.y + shapeRad >= wsize.y) {
-        shapeDir.y *= -1.0f;
-    }
-
-    return;
-}
-
-sf::Vector2f RandomInitialPosition(const sf::Vector2u& windowSize, const float& circleRad) {
-
-    // Seed random number generator
-    std::srand(std::time(nullptr));
-
-    // Nomalize to valid width and heigth
-    const float &validWidth = windowSize.x - (2 * circleRad);
-    const float &validHeight = windowSize.y - (2 * circleRad);
-
-    const float& randWidth = (1 + (std::rand() % int(validWidth))) + circleRad ;
-    const float& randHeigth = (1 + (std::rand() % int(validHeight))) + circleRad ;
-
-    return sf::Vector2f({randWidth, randHeigth});
-}
-
-sf::Vector2f RandomInitialDirection() {
-    // Create a random device (for non-deterministic seeding)
-    std::random_device rd;
-
-    // Use Mersenne Twister engine
-    std::mt19937 gen(rd());
-
-    // Define a uniform real distribution between 0.0 and 1.0
-    std::uniform_real_distribution<float> dist(0.0, 1.0);
-
-    // Generate a random floating-point number
-    float dirX = dist(gen);
-    float dirY = dist(gen);
-
-    // Calculating Norm
-    float normXY = std::sqrt(dirX*dirX + dirY*dirY);
-
-    // Dividing with Norm to get Unit Vector
-    return sf::Vector2f({dirX/normXY, dirY/normXY});
-}
-
-int main()
-{
+int main() {
     // Defining Rendering Window
     sf::RenderWindow window(sf::VideoMode({1920, 1080}), "SFML works!");
 
-    // Defining circle radius
-    const float circleRadius= 100.f;
+    std::vector<Body> body_list;
 
-    // Get random initial position for circle
-    auto shapePos = RandomInitialPosition(window.getSize(), circleRadius);
+    for(int i=0; i<10; ++i)
+    {
+        float rand_x = generateRandomFloatBetweenLimits(GLOBAL_PADDING, 1920-GLOBAL_PADDING);
+        float rand_y = generateRandomFloatBetweenLimits(GLOBAL_PADDING, 1080-GLOBAL_PADDING);
 
-    // Defining our Circle object
-    sf::CircleShape shape(circleRadius);
-    shape.setFillColor(sf::Color::Green);
-    shape.setPosition(
-        shapePos - shape.getRadius()
-    );
+        float radius = generateRandomFloatBetweenLimits(20, 50);
 
-    // Defining Direction
-    auto shapeDir = RandomInitialDirection();
-
-    // Defining Speed
-    float speed = 0.05f;
+        body_list.push_back(createCircleBody(sf::Vector2f({rand_x, rand_y}), 2.f, 2.f, radius, 0.5f));
+    }
 
     // Defining Lambda function for closing the window
-    const auto onClose = [&window](const sf::Event::Closed&){
-        window.close();
-    };
+    const auto onClose = [&window](const sf::Event::Closed &) { window.close(); };
 
-    // Defining Lambda function for adjusting the speed for the ball
-    const auto onKeyPressed = [&speed](const sf::Event::KeyPressed& keyPressed){
-        if (keyPressed.scancode == sf::Keyboard::Scancode::I) {
-            speed = speed - 0.01;
-        } else if (keyPressed.scancode == sf::Keyboard::Scancode::O) {
-            speed = speed + 0.01;
-        } else {
-            
-        }
-    };
+    sf::Clock clock;
 
-    while (window.isOpen())
-    {
-        window.handleEvents(onClose, onKeyPressed);
+    while (window.isOpen()) {
+        // std::cout << "Elapsed Time: " << clock.getElapsedTime().asSeconds() << "\n";
+        window.handleEvents(onClose);
 
         window.clear();
-        window.draw(shape);
-        HandleWindowCollision(
-            shape,
-            window.getSize(),
-            shapeDir,
-            speed
-        );
-        shape.move(shapeDir * speed);
+        // window.draw(shape);
+
+        for (const auto& shape_var : body_list)
+        {
+            window.draw(shape_var.c_shape_);
+        }
+
         window.display();
     }
 }

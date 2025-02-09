@@ -11,4 +11,4 @@ target_link_libraries(sfml_demo PRIVATE SFML::Graphics SFML::Window SFML::System
 
 message(PROJECT_SOURCE_DIR="${SFML_INCLUDE_DIR}")
 
-# target_include_directories(sfml_demo PRIVATE ${SFML_INCLUDE_DIR})
+target_include_directories(sfml_demo PRIVATE ${CMAKE_SOURCE_DIR}/include)
