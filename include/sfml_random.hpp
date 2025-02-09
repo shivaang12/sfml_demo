@@ -6,14 +6,16 @@
 #include <random>
 
 int generateRandomIntBetweenLimits(const int &low, const int &high) {
-    const int adjusted_high = high - low;
+    // Create a random device (for non-deterministic seeding)
+    std::random_device rd;
 
-    // Seed random number generator
-    std::srand(std::time(nullptr));
+    // Use Mersenne Twister engine
+    std::mt19937 gen(rd());
 
-    const int &rand_int = (1 + (std::rand() % int(adjusted_high))) + low;
+    // Define a uniform real distribution between 0.0 and 1.0
+    std::uniform_real_distribution<float> dist(low, high);
 
-    return rand_int;
+    return (int)dist(gen);
 }
 
 float generateRandomFloatBetweenLimits(const float &low, const float &high ) {

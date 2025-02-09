@@ -3,9 +3,11 @@
 
 #include <cmath>
 #include <stdexcept>
+#include <iostream>
 #include <SFML/Graphics.hpp>
 
 #include <utils.hpp>
+#include <sfml_random.hpp>
 
 enum ShapeType { circle = 0, square = 1 };
 
@@ -35,7 +37,9 @@ class Body {
         // Temporary
 
         if (shapeType_ == ShapeType::circle) {
-            this->c_shape_.setFillColor(sf::Color::Green);
+            // this->c_shape_.setFillColor(sf::Color::Green);
+            const auto& rand_index = generateRandomIntBetweenLimits(0, VALID_COLORS.size()-1);
+            this->c_shape_.setFillColor(VALID_COLORS[rand_index]);
             this->c_shape_.setPosition(this->position_ - this->radius_);
         } else {
             throw std::invalid_argument("Shape not implemented");
