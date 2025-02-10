@@ -1,6 +1,8 @@
 #ifndef SFML_DEMO_MANUAL_CONTROLLER_H
 #define SFML_DEMO_MANUAL_CONTROLLER_H
 
+#include <memory>
+
 #include <SFML/Graphics.hpp>
 
 #include <utils.hpp>
@@ -12,7 +14,7 @@ public:
     ManualController(const float &speed) : speed_(speed) {
     }
 
-    void movePlayerUsingInput(Body &player, const float &elapsed_time) const {
+    void movePlayerUsingInput(std::shared_ptr<Body> player, const float &elapsed_time) const {
         int dx = 0;
         int dy = 0;
 
@@ -36,7 +38,7 @@ public:
             auto direction = calculateUnitVector(sf::Vector2f({(float)dx, (float)dy}));
             // TODO: 
             auto velocity = direction * this->speed_ * elapsed_time;
-            player.movePosition(velocity);
+            player->movePosition(velocity);
         }
     }
 
