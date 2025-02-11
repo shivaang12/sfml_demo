@@ -38,7 +38,7 @@ public:
             auto direction = calculateUnitVector(sf::Vector2f({(float)dx, (float)dy}));
             // TODO: 
             auto velocity = direction * this->speed_ * elapsed_time;
-            player->movePosition(velocity);
+            player->setPosition(velocity);
         }
     }
 

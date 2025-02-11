@@ -44,6 +44,11 @@ int main() {
     auto player_controller = ManualController(300.f);
     // auto physics_engine = WorldPhysics();
 
+    // sf::RectangleShape rectangle({50.f, 50.f});
+    // rectangle.setPosition({80.f, 80.f});
+    // rectangle.setRotation(sf::degrees(45.f));
+    // std::cout << rectangle.getOrigin().x << " " << rectangle.getOrigin().y << "\n";
+
     while (window.isOpen()) {
         // std::cout << "Elapsed Time: " << clock.getElapsedTime().asSeconds() << "\n";
         window.handleEvents(onClose);
@@ -55,6 +60,12 @@ int main() {
 
         clock.restart();
 
+        // Apply motion
+        for (const auto &shape_var : body_list) {
+            shape_var->updateRotation(.05f);
+            shape_var->syncShapePositionWithPosition();
+        }
+
         // check for collision
         // physics_engine.handleCollision(body_list);
 
@@ -62,6 +73,7 @@ int main() {
         for (const auto &shape_var : body_list) {
             window.draw(*shape_var->d_shape_);
         }
+        // window.draw(rectangle);
 
         // Display
         window.display();
