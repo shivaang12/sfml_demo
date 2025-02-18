@@ -35,6 +35,9 @@ class WorldPhysics {
                                                   (amount_of_collision / 2.0f) * 1.0f);
                         circle_body_ptr_j->updatePosition(direction_of_collision *
                                                   (amount_of_collision / 2.0f) * -1.0f);
+                        
+                        circle_body_ptr_i->syncShapePositionWithPosition();
+                        circle_body_ptr_j->syncShapePositionWithPosition();
                     }
                 }
             }
