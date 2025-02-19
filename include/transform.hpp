@@ -24,6 +24,10 @@ namespace TMath {
 
         return sf::Vector2f({rx + transform.x_, ry + transform.y_});
     }
+
+    float dotProduct(const sf::Vector2f &vecA, const sf::Vector2f &vecB) {
+        return vecA.x * vecB.x + vecB.y * vecA.y;
+    }
 }
 
 #endif // SFML_DEMO_TRANSFORM_HPP
