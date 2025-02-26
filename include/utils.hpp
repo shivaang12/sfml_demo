@@ -15,6 +15,10 @@ Vector2f operator-(const Vector2f &v, const float &scalar_float) {
 Vector2f operator+(const Vector2f &v, const float &scalar_float) {
     return Vector2f({v.x + scalar_float, v.y + scalar_float});
 }
+
+Vector2f operator/(const Vector2f &v, const float &scalar_float) {
+    return Vector2f({v.x / scalar_float, v.y / scalar_float});
+}
 } // namespace sf
 
 std::vector<sf::Color> VALID_COLORS = {sf::Color(52, 82, 74),    sf::Color(162, 232, 221),

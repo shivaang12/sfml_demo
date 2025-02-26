@@ -13,7 +13,7 @@
 #include <sfml_random.hpp>
 #include <utils.hpp>
 #include <manual_controller.hpp>
-// #include <world_physics.hpp>
+#include <world_physics.hpp>
 
 const int GLOBAL_PADDING = 100;
 
@@ -42,7 +42,7 @@ int main() {
     sf::Clock clock;
 
     auto player_controller = ManualController(300.f);
-    // auto physics_engine = WorldPhysics();
+    auto physics_engine = WorldPhysics();
 
     // sf::RectangleShape rectangle({50.f, 50.f});
     // rectangle.setPosition({80.f, 80.f});
@@ -62,12 +62,12 @@ int main() {
 
         // Apply motion
         for (const auto &shape_var : body_list) {
-            shape_var->updateRotation(.05f);
+            shape_var->updateRotation(.00005f);
             shape_var->syncShapePositionWithPosition();
         }
 
         // check for collision
-        // physics_engine.handleCollision(body_list);
+        physics_engine.handlePolygonsCollision(body_list);
 
         // Draw;
         for (const auto &shape_var : body_list) {

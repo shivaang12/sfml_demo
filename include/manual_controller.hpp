@@ -35,10 +35,12 @@ public:
         }
 
         if (dx != 0 || dy != 0) {
+            // std::cout << "[MANUAL_CONTROL][BEFORE] ROTATION " << player_sqr->rotation_ << " POSITION " << player_sqr->position_.x << " " << player_sqr->position_.y <<  "\n";
             auto direction = calculateUnitVector(sf::Vector2f({(float)dx, (float)dy}));
             // TODO: 
             auto velocity = direction * this->speed_ * elapsed_time;
-            player->setPosition(velocity);
+            player->updatePosition(velocity);
+            player->syncShapePositionWithPosition();
         }
     }
 

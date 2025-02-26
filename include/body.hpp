@@ -4,22 +4,28 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <iostream>
-#include <stdexcept>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 #include <sfml_random.hpp>
-#include <utils.hpp>
 #include <transform.hpp>
+#include <utils.hpp>
 
 enum ShapeType { circle = 0, square = 1 };
 
 class BodyVertices {
-public:
+  public:
     const std::vector<sf::Vector2f> primitive_vertices_;
     std::vector<sf::Vector2f> transformed_vertices_;
     BodyVertices() = default;
-    BodyVertices(const std::vector<sf::Vector2f> &vertices) : primitive_vertices_(vertices), transformed_vertices_(vertices) {}
+    BodyVertices(const std::vector<sf::Vector2f> &vertices)
+        : primitive_vertices_(vertices), transformed_vertices_(vertices) {}
+
+    sf::Vector2f getTransformedMidPoint() const {
+        return TMath::getTransformedMidPoint(this->transformed_vertices_);
+    }
+        
 };
 
 class Body {
@@ -41,8 +47,9 @@ class Body {
 
     Body(const sf::Vector2f &position, const float density, const float mass, float restitution,
          float area, ShapeType shape_type)
-        : position_(position), linearVelocity_(sf::Vector2f({0.0f, 0.0f})), rotation_(0.0), density_(density),
-          mass_(mass), restitution_(restitution), area_(area), shape_type_(shape_type), update_required_(true) {}
+        : position_(position), linearVelocity_(sf::Vector2f({0.0f, 0.0f})), rotation_(0.0),
+          density_(density), mass_(mass), restitution_(restitution), area_(area),
+          shape_type_(shape_type), update_required_(true) {}
 
     virtual void syncShapePositionWithPosition() = 0;
 
@@ -80,11 +87,11 @@ class CircleBody : public Body {
     CircleBody(const sf::Vector2f &position, const float &density, const float &mass,
                const float &restitution, const float &area, const float &radius)
         : Body(position, density, mass, restitution, area, ShapeType::circle), radius_(radius) {
-            this->d_shape_ = std::make_unique<sf::CircleShape>(this->radius_);
-            syncShapePositionWithPosition();
-            const auto &rand_index = generateRandomIntBetweenLimits(0, VALID_COLORS.size() - 1);
-            this->d_shape_->setFillColor(VALID_COLORS[rand_index]);
-        }
+        this->d_shape_ = std::make_unique<sf::CircleShape>(this->radius_);
+        syncShapePositionWithPosition();
+        const auto &rand_index = generateRandomIntBetweenLimits(0, VALID_COLORS.size() - 1);
+        this->d_shape_->setFillColor(VALID_COLORS[rand_index]);
+    }
 
     void syncShapePositionWithPosition() {
         if (update_required_) {
@@ -106,26 +113,29 @@ class SquareBody : public Body {
                const float &restitution, const float &area, const float &width, const float &height)
         : Body(position, density, mass, restitution, area, ShapeType::square), width_(width),
           height_(height) {
-            // Initialize Vertices
-            this->setVertices();
-            this->d_shape_ = std::make_unique<sf::RectangleShape>(sf::Vector2f({this->width_, this->height_}));
-            syncShapePositionWithPosition();
-            const auto &rand_index = generateRandomIntBetweenLimits(0, VALID_COLORS.size() - 1);
-            this->d_shape_->setFillColor(VALID_COLORS[rand_index]);
-          }
+        // Initialize Vertices
+        this->setVertices();
+        this->d_shape_ =
+            std::make_unique<sf::RectangleShape>(sf::Vector2f({this->width_, this->height_}));
+        this->d_shape_->setOrigin({this->width_ / 2.f, this->height_ / 2.f});
+        syncShapePositionWithPosition();
+        const auto &rand_index = generateRandomIntBetweenLimits(0, VALID_COLORS.size() - 1);
+        this->d_shape_->setFillColor(VALID_COLORS[rand_index]);
+    }
 
     void syncShapePositionWithPosition() {
         if (update_required_) {
-            this->d_shape_->setOrigin({this->width_ / 2.f, this->height_ / 2.f});
             this->d_shape_->setPosition(this->position_);
-            this->d_shape_->setRotation(sf::degrees(this->rotation_));
+            this->d_shape_->setRotation(sf::radians(this->rotation_));
 
             // Update vertices
             const auto current_transform = Transform2D(this->position_, this->rotation_);
 
             std::vector<sf::Vector2f> temp_trans(vertices_->primitive_vertices_.size());
-            for (int i = 0;i < vertices_->primitive_vertices_.size(); i++) {
-                temp_trans[i] = TMath::transform(vertices_->primitive_vertices_[i], current_transform);
+            for (int i = 0; i < vertices_->primitive_vertices_.size(); i++) {
+                temp_trans[i] =
+                    TMath::transform(vertices_->primitive_vertices_[i], current_transform);
+                // std::cout << " [TRANS RESULT] " << temp_trans[i].x << " " << temp_trans[i].y << " PRIMITIVE " << vertices_->primitive_vertices_[i].x << " " << vertices_->primitive_vertices_[i].y << "\n";
             }
             vertices_->transformed_vertices_ = temp_trans;
 
@@ -136,33 +146,37 @@ class SquareBody : public Body {
     /*
     This Function changes position with transform
     */
-    void transformUsingTransformation(const Transform2D &transform) {
-        
-    }
+    void transformUsingTransformation(const Transform2D &transform) {}
 
     void setVertices() {
-        const float left = -this->width_/2.f;
+        const float left = -this->width_ / 2.f;
         const float right = left + this->width_;
-        const float up = -this->height_/2.f;
+        const float up = -this->height_ / 2.f;
         const float down = up + this->height_;
 
-        std::vector<sf::Vector2f> square_vertices = {sf::Vector2f({left, up}), sf::Vector2f({right, up}), sf::Vector2f({right, down}), sf::Vector2f({left, down})};
+        std::vector<sf::Vector2f> square_vertices = {
+            sf::Vector2f({left, up}), sf::Vector2f({right, up}), sf::Vector2f({right, down}),
+            sf::Vector2f({left, down})};
 
         this->vertices_ = std::make_shared<BodyVertices>(square_vertices);
     }
 };
 
-std::shared_ptr<Body> createCircleBody (const sf::Vector2f position, const float density, const float mass,
-                       const float radius, const float restitution) {
+std::shared_ptr<Body> createCircleBody(const sf::Vector2f position, const float density,
+                                       const float mass, const float radius,
+                                       const float restitution) {
     float area = radius * radius * M_PI;
-    std::shared_ptr<Body> ptr = std::make_shared<CircleBody>(position, density, mass, restitution, area, radius);
+    std::shared_ptr<Body> ptr =
+        std::make_shared<CircleBody>(position, density, mass, restitution, area, radius);
     return ptr;
 }
 
-std::shared_ptr<Body> createSquareBody(const sf::Vector2f position, const float density, const float mass,
-                      const float width, const float height, const float restitution) {
+std::shared_ptr<Body> createSquareBody(const sf::Vector2f position, const float density,
+                                       const float mass, const float width, const float height,
+                                       const float restitution) {
     float area = width * height;
-    std::shared_ptr<Body> ptr = std::make_shared<SquareBody>(position, density, mass, restitution, area, width, height);
+    std::shared_ptr<Body> ptr =
+        std::make_shared<SquareBody>(position, density, mass, restitution, area, width, height);
     return ptr;
 }
 

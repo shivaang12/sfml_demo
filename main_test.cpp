@@ -20,9 +20,15 @@ std::vector<sf::Vector2f> triangleTypeThree() {
 int main() {
     // Need to define two triangles (transformed)
     const auto &triangle_1 = triangleTypeOne();
-    const auto &triangle_2 = triangleTypeTwo();//triangleTypeTwo();
+    const auto &triangle_2 = triangleTypeThree();//triangleTypeTwo();
 
     const auto wp = WorldPhysics();
 
-    std::cout << "Triangles 1 and 2 intersect? " << wp.intersectPolygons(triangle_1, triangle_2) << "\n";
+    // Check if Collision
+    sf::Vector2f normal_of_collision = sf::Vector2f({0.f, 0.f});
+    float depth_of_collision = 0.f;
+
+    auto b_value = wp.intersectPolygons(triangle_1, triangle_2, normal_of_collision, depth_of_collision);
+
+    std::cout << "Triangles 1 and 2 intersect? " << b_value << " Normal " << normal_of_collision.x << " " << normal_of_collision.y << " Depth " << depth_of_collision << "\n";
 }
