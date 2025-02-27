@@ -17,10 +17,26 @@ std::vector<sf::Vector2f> triangleTypeThree() {
     return {{5.f, 5.f}, {7.f, 7.f}, {7.f, 2.f}};
 }
 
+std::vector<sf::Vector2f> squareTypeOne() {
+    return {{2.f, 2.f}, {2.f, 3.f}, {3.f, 3.f}, {3.f, 2.f}};
+}
+std::vector<sf::Vector2f> squareTypeTwo() {
+    return {{3.1f, 2.5f}, {4.1f, 3.5f}, {5.1f, 2.5f}, {4.1f, 1.5f}};
+}
+
+std::vector<sf::Vector2f> squareTypeThree() {
+    return {{1409.54, 536.06}, {1453.31,494.942}, {1494.43,538.719},{1450.65,579.838}};
+}
+
+std::vector<sf::Vector2f> squareTypeFour() {
+    return {{1313.02 ,507.374} , {1382.63 ,507.374},  {1382.63, 576.985},  {1313.02, 576.985}};
+}
+
+
 int main() {
     // Need to define two triangles (transformed)
-    const auto &triangle_1 = triangleTypeOne();
-    const auto &triangle_2 = triangleTypeThree();//triangleTypeTwo();
+    const auto &triangle_1 = squareTypeThree();
+    const auto &triangle_2 = squareTypeFour();//triangleTypeTwo();
 
     const auto wp = WorldPhysics();
 

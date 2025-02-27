@@ -1,20 +1,19 @@
 #include <vector>
 #include <iostream>
+#include <memory>
 #include <SFML/Graphics.hpp>
 
 #include <transform.hpp>
+#include <body.hpp>
 
 int main() {
 
     sf::RenderWindow window(sf::VideoMode({1920, 1080}), "SFML works!");
 
-    sf::RectangleShape shape(sf::Vector2f({50.0f, 50.0f}));
+    // sf::RectangleShape shape(sf::Vector2f({50.0f, 50.0f}));
     // std::cout << shape.getLocalBounds().size.x << " " << shape.getLocalBounds().size.y << "\n";
-    shape.setOrigin({shape.getLocalBounds().size.x / 2, shape.getLocalBounds().size.y / 2});
 
-    shape.setFillColor(sf::Color::Green);
-
-    shape.setPosition(sf::Vector2f({100.0f, 100.0f}));
+    std::shared_ptr<Body> square_body = createSquareBody(sf::Vector2f({200.0f, 200.0f}), 2.f, 2.f, 100.0f, 100.0f, 0.5f);
 
     sf::Clock clock;
     window.setFramerateLimit(60);
@@ -60,31 +59,32 @@ int main() {
             movement.x += 1.f;
             update = true;
         }
-
-        // if (dx != 0 || dy != 0 || dr!= 0) {
-        //     auto direction = TMath::calculateUnitVector(sf::Vector2f({(float)dx, (float)dy}));
-        //     float rotation_radian = (float)dr * 0.01f;
-
-        //     auto velocity = direction * 300.f *  e_time;
-
-        //     std::cout << shape.getRotation().asRadians() << " " << rotation_radian << " " << e_time <<  "\n";
-
-        //     shape.rotate(sf::radians(rotation_radian));
-        //     // shape.move(velocity);
-        //     // shape.setOrigin({shape.getLocalBounds().size.x / 2, shape.getLocalBounds().size.y / 2});
-        // }
         
         float e_time = clock.restart().asSeconds();
+
+        std::shared_ptr<SquareBody> s_body = std::static_pointer_cast<SquareBody>(square_body);
         
         if (update) {
             float length = TMath::calculateLengthOfVector(movement);
             const auto direction = TMath::calculateUnitVector(movement);
-            shape.move(direction * 300.f * e_time);
-            shape.rotate(sf::radians(dr * 10.f * e_time));
+            s_body->updatePosition(direction * 300.f * e_time);
+            s_body->updateRotation(dr * 4.f * e_time);
+            s_body->syncShapePositionWithPosition();
+        }
+
+        std::vector<sf::CircleShape> corner_vector(4);
+
+        for (int i=0; i<s_body->vertices_->transformed_vertices_.size(); i++) {
+            corner_vector[i].setOrigin({10.f, 10.f,});
+            corner_vector[i].setPosition((s_body->vertices_->transformed_vertices_)[i]);
+            corner_vector[i].setRadius(10.f);
         }
 
         window.clear();
-        window.draw(shape);
+        window.draw(*(square_body->d_shape_));
+        for (int i=0; i<corner_vector.size(); i++) {
+            window.draw(corner_vector[i]);
+        }
         window.display();
     }
 

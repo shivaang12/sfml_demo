@@ -19,11 +19,11 @@ public:
         int dy = 0;
         int dr = 0;
         
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::E) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::E)) {
             dr--;
         }
             
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::E) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::R)) {
             dr++;
         }
 
@@ -43,11 +43,12 @@ public:
             dx++;
         }
 
-        if (dx != 0 || dy != 0) {
+        if (dx != 0 || dy != 0 || dr !=0 ) {
             auto direction = calculateUnitVector(sf::Vector2f({(float)dx, (float)dy}));
-            // TODO: 
             auto velocity = direction * this->speed_ * elapsed_time;
             player->updatePosition(velocity);
+
+            player->updateRotation((float)dr * 10.f * elapsed_time);
             player->syncShapePositionWithPosition();
         }
     }

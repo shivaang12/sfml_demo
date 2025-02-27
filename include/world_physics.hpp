@@ -26,10 +26,24 @@ class WorldPhysics {
                 auto sqr_body_ptr_j = std::static_pointer_cast<SquareBody>(body_list[j]);
 
                 // Check if Collision
-                sf::Vector2f normal_of_collision = sf::Vector2f({0.f, 0.f});
+                sf::Vector2f normal_of_collision({0.f, 0.f});
                 float depth_of_collision = 0.f;
 
-                if (intersectPolygons(sqr_body_ptr_i->vertices_->transformed_vertices_, sqr_body_ptr_j->vertices_->transformed_vertices_, normal_of_collision, depth_of_collision)) {
+                if (this->intersectPolygons(sqr_body_ptr_i->vertices_->transformed_vertices_, sqr_body_ptr_j->vertices_->transformed_vertices_, normal_of_collision, depth_of_collision)) {
+
+                    // std::cout << "[INTERSECTION] NORMAL " << normal_of_collision.x << " " << normal_of_collision.y << " DEPTH " << depth_of_collision << " ";
+
+                    // std::cout << " i ";
+                    // for (int k=0; k<sqr_body_ptr_i->vertices_->transformed_vertices_.size(); k++) {
+                    //     std::cout << k << " " << sqr_body_ptr_i->vertices_->transformed_vertices_[k].x << " " << sqr_body_ptr_i->vertices_->transformed_vertices_[k].y << " ";
+                    // }
+
+                    // std::cout << " j ";
+                    // for (int k=0; k<sqr_body_ptr_j->vertices_->transformed_vertices_.size(); k++) {
+                    //     std::cout << k << " " << sqr_body_ptr_j->vertices_->transformed_vertices_[k].x << " " << sqr_body_ptr_j->vertices_->transformed_vertices_[k].y << " ";
+                    // }
+                    // std::cout << "\n";
+
                     sqr_body_ptr_i->updatePosition(normal_of_collision * (depth_of_collision/2.0f) * -1.0f);
                     sqr_body_ptr_j->updatePosition(normal_of_collision * (depth_of_collision/2.0f) * 1.0f);
 
@@ -61,6 +75,8 @@ class WorldPhysics {
             projectVertices(tf_vertices_A, normal_of_1_n_2, minA, maxA);
             projectVertices(tf_vertices_B, normal_of_1_n_2, minB, maxB);
 
+            // std::cout << "[intersectPolygons] A " << normal_of_1_n_2.x << " " << normal_of_1_n_2.y << " MINAB " << minA << " " << maxB << " " << minB << " " << maxA << "\n";
+
             if (minA >= maxB || minB >= maxA) {
                 // There is seperation
                 return false;
@@ -82,11 +98,16 @@ class WorldPhysics {
             const auto &tf_vert_diff = tf_vert_2 - tf_vert_1;
             const auto &normal_of_1_n_2 = sf::Vector2f({-tf_vert_diff.y, tf_vert_diff.x});
 
-            float minA, minB = std::numeric_limits<float>::max();
-            float maxA, maxB = std::numeric_limits<float>::min();
+            float minA = std::numeric_limits<float>::max();
+            float minB = std::numeric_limits<float>::max();
+            float maxA = -std::numeric_limits<float>::max();
+            float maxB = -std::numeric_limits<float>::max();
 
             projectVertices(tf_vertices_A, normal_of_1_n_2, minA, maxA);
             projectVertices(tf_vertices_B, normal_of_1_n_2, minB, maxB);
+
+            // std::cout << "[intersectPolygons] B " << normal_of_1_n_2.x << " " << normal_of_1_n_2.y << " MINAB " << minA << " " << maxB << " " << minB << " " << maxA << "\n";
+
 
             if (minA >= maxB || minB >= maxA) {
                 // There is seperation
@@ -123,6 +144,8 @@ class WorldPhysics {
                          const sf::Vector2f &normal_axis, float &min, float &max) const {
         for (int i = 0; i < tf_vertices.size(); i++) {
             float proj = TMath::dotProduct(tf_vertices[i], normal_axis);
+
+            // std::cout << "[projectVertices] " << proj << " vert " << tf_vertices[i].x << " " << tf_vertices[i].y << "\n";
 
             if (proj < min) {
                 min = proj;
