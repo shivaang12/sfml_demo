@@ -2,6 +2,7 @@
 #define SFML_DEMO_TRANSFORM_HPP
 
 #include <cmath>
+#include <iostream>
 
 #include <SFML/Graphics.hpp>
 
@@ -30,12 +31,18 @@ namespace TMath {
         return vecA.x * vecB.x + vecB.y * vecA.y;
     }
 
-    float calculateLengthOfVector(const sf::Vector2f &vec) {
-        return std::sqrt(dotProduct(vec, vec));
+    inline float calculateLengthOfVector(const sf::Vector2f &vec) {
+        float temp = std::sqrt(dotProduct(vec, vec));
+        return temp;
     }
 
     sf::Vector2f calculateUnitVector(const sf::Vector2f &vec) {
         const auto length = calculateLengthOfVector(vec);
+
+        // Check for Numerical Stability
+        if (length < 0.0001f) {
+            return sf::Vector2f( {vec.x, vec.y} );
+        }
         return sf::Vector2f( {vec.x/length, vec.y/length} );
     }
 

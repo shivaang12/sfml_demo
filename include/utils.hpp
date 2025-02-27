@@ -32,6 +32,11 @@ float calculateLengthOfVector(const sf::Vector2f &vec) {
                                        
 sf::Vector2f calculateUnitVector(const sf::Vector2f &vec) {
     const auto length = calculateLengthOfVector(vec);
+
+    // Check for Numerical Stability
+    if (length < 0.0001f) {
+        return sf::Vector2f( {vec.x, vec.y} );
+    }
     return sf::Vector2f( {vec.x/length, vec.y/length} );
 }
 #endif // SFML_DEMO_UTILS_H

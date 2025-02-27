@@ -17,6 +17,15 @@ public:
     void movePlayerUsingInput(std::shared_ptr<Body> player, const float &elapsed_time) const {
         int dx = 0;
         int dy = 0;
+        int dr = 0;
+        
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::E) {
+            dr--;
+        }
+            
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::E) {
+            dr++;
+        }
 
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Up)) {
             dy--;
@@ -35,7 +44,6 @@ public:
         }
 
         if (dx != 0 || dy != 0) {
-            // std::cout << "[MANUAL_CONTROL][BEFORE] ROTATION " << player_sqr->rotation_ << " POSITION " << player_sqr->position_.x << " " << player_sqr->position_.y <<  "\n";
             auto direction = calculateUnitVector(sf::Vector2f({(float)dx, (float)dy}));
             // TODO: 
             auto velocity = direction * this->speed_ * elapsed_time;

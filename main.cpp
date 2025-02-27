@@ -56,9 +56,7 @@ int main() {
         window.clear();
 
         // Assuming body_list[0] is our player
-        player_controller.movePlayerUsingInput(body_list[0], clock.getElapsedTime().asSeconds());
-
-        clock.restart();
+        player_controller.movePlayerUsingInput(body_list[0], clock.restart().asSeconds());
 
         // Apply motion
         for (const auto &shape_var : body_list) {
